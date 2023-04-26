@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push: [ ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2
+      - uses: actions/setup-node@v3
+      - uses: actions/setup-go@v4
+
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: make setup
+      - run: make build.webapp
+      - run: make build.app
+
+      - run: ls build/bin
+
